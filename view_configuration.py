@@ -57,11 +57,13 @@ def view_configuration() -> Plan:
         else:
             plan_content = upload_content
         constants_str, data = split_constants(plan_content)
-        constants = yaml.safe_load(constants_str)
-        if st.checkbox('Adjust Configuration File Constants?'):
-            constants = configure_constants(constants)
-        if constants is not None:
-            data = Template(data).render(constants)
+        if constants_str is not None:
+            constants = yaml.safe_load(constants_str)
+            if st.checkbox('Adjust Configuration File Constants?'):
+                constants = configure_constants(constants)
+        else:
+            constants = {}
+        data = Template(data).render(constants)
         plan = Plan(yaml.safe_load(data))
         plan_download_data = plan_content
     else:

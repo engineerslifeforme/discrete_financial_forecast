@@ -5,6 +5,7 @@ import datetime
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import time
 
 from calculate import calculate
 from view_configuration import view_configuration
@@ -17,7 +18,9 @@ st.set_page_config(layout='wide')
 plan = view_configuration()
 
 st.sidebar.markdown('# Plan Execution Results')
+start = time.time()
 balance_log, transactions_df = calculate(plan)
+st.markdown(f'Calculation time: {round(time.time() - start, 1)} seconds')
 final_balance =  dstr(balance_log.loc[balance_log['type'] == 'TOTAL', 'balance'].max())
 st.sidebar.markdown(f"Final Balance: {final_balance}")
 
