@@ -17,3 +17,4 @@
 11. Piece-wise interest
 12. Milestones
 13. ----- Future value calculation error
+14. Remove or incorporate default inflation

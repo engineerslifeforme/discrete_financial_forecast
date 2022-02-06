@@ -7,6 +7,7 @@ from stqdm import stqdm
 from Plan import Plan
 from common import year_month_id, id_to_date, ZERO
 
+@st.cache(suppress_st_warning=True)
 def calculate(plan: Plan) -> tuple:
     start_date_id = year_month_id(plan.configuration.start_year, plan.configuration.start_month)
     end_date_id = year_month_id(plan.configuration.end_year, plan.configuration.end_month)
@@ -15,7 +16,7 @@ def calculate(plan: Plan) -> tuple:
     balance_log = []
     transactions = []
 
-    for current_date_id in stqdm(range(start_date_id, end_date_id)):
+    for current_date_id in stqdm(range(start_date_id, end_date_id), desc='Running forecast through each month'):
         periods_since_start = current_date_id - start_date_id
         statement_date = id_to_date(current_date_id + 1) # Show balance as the first of the following month
         
