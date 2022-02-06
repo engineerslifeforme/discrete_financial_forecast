@@ -2,6 +2,7 @@
 
 import streamlit as st
 import pandas as pd
+from stqdm import stqdm
 
 from Plan import Plan
 from common import year_month_id, id_to_date, ZERO
@@ -14,11 +15,10 @@ def calculate(plan: Plan) -> tuple:
     balance_log = []
     transactions = []
 
-    while current_date_id < end_date_id:
+    for current_date_id in stqdm(range(start_date_id, end_date_id)):
         periods_since_start = current_date_id - start_date_id
         statement_date = id_to_date(current_date_id + 1) # Show balance as the first of the following month
-        current_date_id += 1
-
+        
         total = ZERO
         for asset_list in [plan.accounts, plan.assets, plan.liabilities]:
             for asset_item in asset_list:

@@ -79,7 +79,7 @@ def future_value(investment: Decimal, rate: float, periods: int) -> Decimal:
     :rtype: decimal
     https://www.investopedia.com/terms/f/futurevalue.asp#:~:text=Future%20value%20(FV)%20is%20the,be%20worth%20in%20the%20future.
     """
-    return investment * f2d((1 + (rate * periods)))
+    return round(f2d(float(investment) * math.pow(1 + rate, periods)), 2)
 
 def mortgage_payment(principal: Decimal, interest: float, periods: int) -> Decimal:
     return round((principal * f2d(interest))/f2d(1 - math.pow(1 + interest, -1 * periods)), 2)

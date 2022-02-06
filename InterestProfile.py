@@ -5,7 +5,7 @@ from decimal import Decimal
 
 import streamlit as st
 
-from common import date_id, f2d
+from common import date_id, f2d, future_value
 
 PROFILE_TYPES = [
     'Constant',
@@ -100,7 +100,11 @@ class ConstantPhase(InterestPhase):
         return profile
 
     def configure(self):
-        self.rate = st.number_input(f'{self.label} Constant Rate (%/year)', value=self.rate, step=0.01)  
+        self.rate = st.number_input(f'{self.label} Constant Rate (%/year)', value=self.rate, step=0.01)
+
+    @property
+    def monthly_rate(self) -> float:
+        return yearly_percentage_to_monthly(self.rate)
 
 class LinearPhase(InterestPhase):
     base_label = 'Linear'
@@ -249,10 +253,14 @@ class InterestProfile:
             # handle the dates here, not in phases
 
     def calculate_future_value(self, value: Decimal, period_index: int) -> Decimal:
-        counter = 0
-        profile = self.get_profile()
-        current_value = float(value)
-        while counter <= period_index:
-            current_value = current_value * (1.0 + profile[counter])
-            counter += 1
-        return round(f2d(current_value), 2)
+        if self.profile_type == PROFILE_TYPES[0]: # Constant:
+            result = round(future_value(value, self.interest_phases[0].monthly_rate, period_index), 2)
+        else:
+            counter = 0
+            profile = self.get_profile()
+            current_value = float(value)
+            while counter < period_index:
+                current_value = current_value * (1.0 + profile[counter])
+                counter += 1
+            result = round(f2d(current_value), 2)
+        return result
