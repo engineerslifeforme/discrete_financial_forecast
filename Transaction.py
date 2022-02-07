@@ -100,6 +100,8 @@ class Transaction:
             'start': self.start,
             'end': self.end,
             'month_gap': self.month_gap,
+            'milestone_end': self.milestone_end,
+            'milestone_start': self.milestone_start,
         }
         for key in other_values:
             value = other_values[key]

@@ -69,6 +69,8 @@ def view_configuration() -> Plan:
     else:
         st.error(f'Unrecognized Editor Mode {editor_mode}')
         st.stop()
+
+    #st.write(plan.to_dict())
     
     st.sidebar.markdown('# Plan Summary')
     st.sidebar.markdown(plan.configuration.summary)

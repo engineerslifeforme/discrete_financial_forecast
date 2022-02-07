@@ -19,3 +19,4 @@
 13. ----- Future value calculation error
 14. Remove or incorporate default inflation
 15. Delete items
+16. Check bounds on date ranges

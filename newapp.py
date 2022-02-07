@@ -10,6 +10,7 @@ import time
 from calculate import calculate
 from view_configuration import view_configuration
 from common import dstr, ZERO
+from visualize import visualize_transactions
 
 st.set_page_config(layout='wide')
 
@@ -62,32 +63,10 @@ if st.checkbox('Show Summary Account View?'):
 with st.expander('Expense Views'):
     st.markdown('## Expense Views')
     expenses = tranactions.loc[tranactions['amount'] < ZERO]
-    if len(expenses) > 0:
-        expense_types = expenses['type'].unique()
-        displayed_types = st.multiselect('Expense Types to Display', options=expense_types, default=expense_types)
-        displayed_expenses = expenses.loc[expenses['type'].isin(displayed_types)]
-        displayed_expenses['abs_amount'] = displayed_expenses['amount'].abs()
-        
-        if st.checkbox('Expense Time View'):
-            options = [year for year in range(plan.configuration.start.year, plan.configuration.end.year + 1)]
-            selected_year = st.selectbox('Expense Year', index=0, options=options)
-            displayed_expenses['year'] = displayed_expenses['date'].dt.year
-            displayed_expenses['float_amount'] = displayed_expenses['abs_amount'].astype(float)
-            st.plotly_chart(px.bar(
-                displayed_expenses.loc[displayed_expenses['year'] == selected_year, :],
-                x='date',
-                y='abs_amount',
-                color='name',
-            ))
+    visualize_transactions(expenses, plan, 'Expense')
 
-        if st.checkbox('Total Expenses'):
-            # TODO: Need to group here
-            st.plotly_chart(px.bar(
-                displayed_expenses.groupby('name').sum().reset_index(drop=False),
-                x='name',
-                y='abs_amount',
-                color='name',
-            ))
-    else:
-        st.warning('The current plan to does have any expenses!')
+with st.expander('Income Views'):
+    st.markdown('## Income Views')
+    incomes = tranactions.loc[tranactions['amount'] > ZERO]
+    visualize_transactions(incomes, plan, 'Income')
     
