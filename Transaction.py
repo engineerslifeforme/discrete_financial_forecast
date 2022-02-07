@@ -10,6 +10,8 @@ from common import (
     NEGATIVE_ONE,
     date_id,
     dstr,
+    get_date,
+    DATE_TYPES,
 )
 from Configuration import Configuration
 from Change import Change
@@ -47,7 +49,9 @@ class Transaction:
         start: datetime.date = None,
         end: datetime.date = None,
         month_gap: int = None,
-        interest_profile: str = None):
+        interest_profile: str = None,
+        milestone_start: str = None,
+        milestone_end: str = None):
         
         self.unique_id = unique_id
         self.configuration = plan.configuration
@@ -75,6 +79,12 @@ class Transaction:
             self.interest_profile = interest_profile
         self.month_count = 0
         self.plan = plan
+        self.milestone_start = milestone_start
+        if self.milestone_start is not None:
+            self.start = plan.get_milestone(self.milestone_start).date
+        self.milestone_end = milestone_end
+        if self.milestone_end is not None:
+            self.end = plan.get_milestone(self.milestone_end).date
     
     def to_dict(self):
         data = {
@@ -99,13 +109,17 @@ class Transaction:
             del(data['month_gap']) # Only used for internal purposes
         if self.duration == DURATION_OPTIONS[4]: # one time
             del(data['end']) # only used for internal purposes
+        if self.milestone_start is not None:
+            del(data['start'])
+        if self.milestone_end is not None:
+            del(data['end'])
         return data
 
-    def configure(self):
+    def configure(self, location):
         label = f'{self.transaction_type} #{self.unique_id}'
-        st.markdown('---')
-        self.name = st.text_input(f'{label} Name', value=self.name)
-        left, middle, right = st.columns(3)
+        location.markdown('---')
+        self.name = location.text_input(f'{label} Name', value=self.name)
+        left, middle, right = location.columns(3)
         self.frequency = left.selectbox(f'{label} Frequency', options=FREQUENCIES, index=FREQUENCIES.index(self.frequency))
         if self.frequency == FREQUENCIES[4]: # Multi-month
             if self.month_gap is None:
@@ -124,24 +138,21 @@ class Transaction:
             monthly_cost = self.monthly_amount
         else:
             monthly_cost = f2d(float(self.monthly_amount) / float(self.month_gap))
-        st.markdown(f'Monthly Cost: {dstr(monthly_cost)}')        
-        self.source_account, self.destination_account = self.configure_source_destination(label)
-        self.duration = st.selectbox(f'{label} Duration', options=DURATION_OPTIONS, index=DURATION_OPTIONS.index(self.duration))
+        location.markdown(f'Monthly Cost: {dstr(monthly_cost)}')        
+        self.source_account, self.destination_account = self.configure_source_destination(location, label)
+        self.duration = location.selectbox(f'{label} Duration', options=DURATION_OPTIONS, index=DURATION_OPTIONS.index(self.duration))
         if self.duration == DURATION_OPTIONS[2]: # end only
-            self.end = st.date_input(f'{label} End Date', value=self.end)
+            self.end, self.milestone_end = get_date(location, f'{label} End Date', self.plan, default_date=self.end, default_milestone=self.milestone_end)
         elif self.duration == DURATION_OPTIONS[3]: # start only
-            self.start = st.date_input(f'{label} Start Date', value=self.start)
-        elif self.duration == DURATION_OPTIONS[1]: # range
-            st.info('Only the month/year info is used.')
-            left, right = st.columns(2)
-            self.start = left.date_input(f'{label} Start Date', value=self.start)
-            self.end = right.date_input(f'{label} End Date', value=self.end)
+            self.start, self.milestone_start = get_date(location, f'{label} Start Date', self.plan, default_date=self.start, default_milestone=self.milestone_start)
+        elif self.duration == DURATION_OPTIONS[1]: # range            
+            self.start, self.milestone_start = get_date(location, f'{label} Start Date', self.plan, default_date=self.start, default_milestone=self.milestone_start)
+            self.end, self.milestone_end = get_date(location, f'{label} End Date', self.plan, default_date=self.end, default_milestone=self.milestone_end)
         elif self.duration == DURATION_OPTIONS[4]: # one time
-            st.info('Only the month/year info is used.')
-            self.start = st.date_input(f'{label} One Time Date', value=self.start)
+            self.start, self.milestone_start = get_date(location, f'{label} One Time Date', self.plan, default_date=self.start, default_milestone=self.milestone_start)
             self.end = self.start
         interest_profile_names = self.plan.interest_profile_names
-        self.interest_profile = st.selectbox(f'{label} Interest Profile', options=interest_profile_names, index=interest_profile_names.index(self.interest_profile))
+        self.interest_profile = location.selectbox(f'{label} Interest Profile', options=interest_profile_names, index=interest_profile_names.index(self.interest_profile))
 
 
     @property
@@ -237,12 +248,12 @@ class Income(Transaction):
         else:
             return destination_account
 
-    def configure_source_destination(self, label: str) -> tuple:
+    def configure_source_destination(self, location, label: str) -> tuple:
         if self.destination_account is not None:
             default = self.destination_account
         else:
             default = self.asset_list[0]
-        destination = st.selectbox(f'{label} Destination Account', options=self.asset_list, index=self.asset_list.index(default))
+        destination = location.selectbox(f'{label} Destination Account', options=self.asset_list, index=self.asset_list.index(default))
         return None, destination        
 
 class Expense(Transaction):
@@ -268,12 +279,12 @@ class Expense(Transaction):
     def set_destination_account(self, destination_account: str, asset_list: list) -> str:
         return None
 
-    def configure_source_destination(self, label: str) -> tuple:
+    def configure_source_destination(self, location, label: str) -> tuple:
         if self.source_account is not None:
             default = self.source_account
         else:
             default = self.asset_list[0]
-        source = st.selectbox(f'{label} Source Account', options=self.asset_list, index=self.asset_list.index(default))
+        source = location.selectbox(f'{label} Source Account', options=self.asset_list, index=self.asset_list.index(default))
         return source, None
 
 class Transfer(Transaction):
@@ -291,12 +302,12 @@ class Transfer(Transaction):
         else:
             return destination_account
 
-    def configure_source_destination(self, label: str) -> tuple:
+    def configure_source_destination(self, location, label: str) -> tuple:
         if self.destination_account is not None:
             destination_default = self.destination_account
         else:
             destination_default = self.asset_list[0]
-        left, right = st.columns(2)
+        left, right = location.columns(2)
         destination = right.selectbox(f'{label} Destination Account', options=self.asset_list, index=self.asset_list.index(destination_default))
         if self.source_account is not None:
             default = self.source_account

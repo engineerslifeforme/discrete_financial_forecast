@@ -28,7 +28,7 @@ def configure_constants(constants: dict) -> dict:
 
 def view_configuration() -> Plan:
     st.sidebar.markdown('# Editor Configuration')
-    EDITOR_MODES = ['GUI', 'Config', 'No Configuration']
+    EDITOR_MODES = ['GUI Configuration', 'Manual Configuration', 'View Only']
     editor_mode = st.sidebar.radio(' Editor Mode', options=EDITOR_MODES)
 
     previous_plan_upload = st.file_uploader('Previous Plan Upload')

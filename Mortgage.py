@@ -68,22 +68,22 @@ class Mortgage:
             'source_account': self.source_account,
         }
 
-    def configure(self):
+    def configure(self, location):
         if len(self.liability_list) < 1:
-            st.error('At least one liability needs to be defined to be associated with the mortgage')
+            location.error('At least one liability needs to be defined to be associated with the mortgage')
         else:
             label = f'Mortgage #{self.unique_id}'
-            st.markdown('---')
-            self.name = st.text_input(f'{label} Name', value=self.name)
-            left, middle, right = st.columns(3)
+            location.markdown('---')
+            self.name = location.text_input(f'{label} Name', value=self.name)
+            left, middle, right = location.columns(3)
             self.starting_balance = f2d(right.number_input(f'{label} Original Loan Amount ($)', value=float(self.starting_balance), min_value=0.0, step=0.01))
             self.length = int(left.number_input(f'{label} Original Length (Years)', value=self.length, min_value=1, step=1))
             self.rate = self.calculate_rate(middle.number_input(f'{label} Rate (%/year)', value=self.display_rate, min_value=0.0, step=0.01))
-            left, right = st.columns(2)
+            left, right = location.columns(2)
             self.liability = left.selectbox(f'{label} Liability', options=self.liability_list, index=self.liability_list.index(self.liability))
             self.source_account = right.selectbox(f'{label} Account Payment Source', options=self.account_list, index=self.account_list.index(self.source_account))
-            self.extra_principal = f2d(st.number_input(f'{label} Extra Principal ($/month)', value=float(self.extra_principal), min_value=0.0, step=0.01))
-            st.markdown(f'Payment $ {self.payment}')
+            self.extra_principal = f2d(location.number_input(f'{label} Extra Principal ($/month)', value=float(self.extra_principal), min_value=0.0, step=0.01))
+            location.markdown(f'Payment $ {self.payment}')
 
     def update(self, date: datetime.date, period_index: int, plan) -> list:
         changes = []

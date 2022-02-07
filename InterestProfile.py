@@ -99,8 +99,8 @@ class ConstantPhase(InterestPhase):
             current += 1
         return profile
 
-    def configure(self):
-        self.rate = st.number_input(f'{self.label} Constant Rate (%/year)', value=self.rate, step=0.01)
+    def configure(self, location):
+        self.rate = location.number_input(f'{self.label} Constant Rate (%/year)', value=self.rate, step=0.01)
 
     @property
     def monthly_rate(self) -> float:
@@ -132,8 +132,8 @@ class LinearPhase(InterestPhase):
     def _end_rate(self) -> float:
         return yearly_percentage_to_monthly(self.end_rate)
 
-    def configure(self):
-        left, right = st.columns(2)
+    def configure(self, location):
+        left, right = location.columns(2)
         self.start_rate = left.number_input(f'{self.label} Start Rate (%/year)', value=self.start_rate, step=0.01)
         self.end_rate = right.number_input(f'{self.label} End Rate (%/year)', value=self.end_rate, step=0.01)
 
@@ -205,9 +205,9 @@ class InterestProfile:
             profile.extend(phase.get_profile())
         return profile
 
-    def configure(self):
-        st.markdown('---')
-        left, right = st.columns(2)
+    def configure(self, location):
+        location.markdown('---')
+        left, right = location.columns(2)
         self.name = left.text_input(f'{self.label} Name', value=self.name)
         self.profile_type = right.selectbox(f'{self.label} Type', options=PROFILE_TYPES, index=PROFILE_TYPES.index(self.profile_type))
         # Need a none
@@ -218,7 +218,7 @@ class InterestProfile:
                 if first_phase.phase_type != PHASE_TYPES[0] or len(self.interest_phases) > 1: # bad
                     create_default = True
                 else: # good
-                    first_phase.configure()
+                    first_phase.configure(location)
             else:
                 create_default = True
             if create_default:
@@ -228,7 +228,7 @@ class InterestProfile:
                     self.start,
                     self.end,
                 )
-                phase.configure()
+                phase.configure(location)
                 self.interest_phases = [phase]
         elif self.profile_type == PROFILE_TYPES[1]: # Linear
             create_default = False
@@ -237,7 +237,7 @@ class InterestProfile:
                 if first_phase.phase_type != PHASE_TYPES[1] or len(self.interest_phases) > 1: # bad
                     create_default = True
                 else: # good
-                    first_phase.configure()
+                    first_phase.configure(location)
             else:
                 create_default = True
             if create_default:
@@ -247,7 +247,7 @@ class InterestProfile:
                     self.start,
                     self.end,
                 )
-                phase.configure()
+                phase.configure(location)
                 self.interest_phases = [phase]
         # elif Piecewise
             # handle the dates here, not in phases

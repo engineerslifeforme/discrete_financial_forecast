@@ -73,22 +73,22 @@ class BaseAsset:
             data['priority'] = self.priority
         return data
 
-    def configure(self):
+    def configure(self, location):
         label = f'{self.asset_class} #{self.unique_id}'
-        st.markdown('---')
-        self.name = st.text_input(f'{label} Name', value=self.name)
+        location.markdown('---')
+        self.name = location.text_input(f'{label} Name', value=self.name)
         self.starting_balance = self.calculate_starting_balance(
-            f2d(st.number_input(f'{label} Starting Balance ($)', value=self.display_starting_balance, min_value=0.00, step=0.01))
+            f2d(location.number_input(f'{label} locationarting Balance ($)', value=self.display_starting_balance, min_value=0.00, step=0.01))
         )
         if self.support_minimum:
-            self.enforce_minimum_balance = st.checkbox(f'{label} Enforce Minimum Balance?', value=self.enforce_minimum_balance)
+            self.enforce_minimum_balance = location.checkbox(f'{label} Enforce Minimum Balance?', value=self.enforce_minimum_balance)
             if self.enforce_minimum_balance:
-                st.info('When active `Enforce Minimum Balance` will pull from other assets each month according to priority to maintain minimum')
-                self.minimum_balance = f2d(st.number_input(f'{label} Minimum Balance ($)', value=float(self.minimum_balance), step=0.01))
+                location.info('When active `Enforce Minimum Balance` will pull from other assets each month according to priority to maintain minimum')
+                self.minimum_balance = f2d(location.number_input(f'{label} Minimum Balance ($)', value=float(self.minimum_balance), step=0.01))
         if self.prioritized:
-            self.priority = int(st.number_input(f'{label} Withdrawal Priority', value=self.priority, min_value=0, step=1))
+            self.priority = int(location.number_input(f'{label} Withdrawal Priority', value=self.priority, min_value=0, step=1))
         interest_profile_names = self.plan.interest_profile_names
-        self.interest_profile = st.selectbox(f'{label} Interest Profile', options=interest_profile_names, index=interest_profile_names.index(self.interest_profile))
+        self.interest_profile = location.selectbox(f'{label} Interest Profile', options=interest_profile_names, index=interest_profile_names.index(self.interest_profile))
             
         self.balance = self.starting_balance
 

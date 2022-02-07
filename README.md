@@ -6,7 +6,7 @@
 
 1. Multiple YAMLs combined
 2. ---- GUI controls for jinja variables
-3. Expense plot with double time slider
+3. ---- Expense plot with double time slider
 4. ---- Complex Interest capes
 5. ---- Greater than Monthly Expenses/Incomes
 6. Docs
@@ -18,3 +18,4 @@
 12. Milestones
 13. ----- Future value calculation error
 14. Remove or incorporate default inflation
+15. Delete items
