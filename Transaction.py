@@ -120,7 +120,10 @@ class Transaction:
     def configure(self, location):
         label = f'{self.transaction_type} #{self.unique_id}'
         location.markdown('---')
-        self.name = location.text_input(f'{label} Name', value=self.name)
+        left, right = location.columns(2)
+        self.name = left.text_input(f'{label} Name', value=self.name)
+        interest_profile_names = self.plan.interest_profile_names
+        self.interest_profile = right.selectbox(f'{label} Interest Profile', options=interest_profile_names, index=interest_profile_names.index(self.interest_profile))
         left, middle, right = location.columns(3)
         self.frequency = left.selectbox(f'{label} Frequency', options=FREQUENCIES, index=FREQUENCIES.index(self.frequency))
         if self.frequency == FREQUENCIES[4]: # Multi-month
@@ -153,8 +156,7 @@ class Transaction:
         elif self.duration == DURATION_OPTIONS[4]: # one time
             self.start, self.milestone_start = get_date(location, f'{label} One Time Date', self.plan, default_date=self.start, default_milestone=self.milestone_start)
             self.end = self.start
-        interest_profile_names = self.plan.interest_profile_names
-        self.interest_profile = location.selectbox(f'{label} Interest Profile', options=interest_profile_names, index=interest_profile_names.index(self.interest_profile))
+        
 
 
     @property

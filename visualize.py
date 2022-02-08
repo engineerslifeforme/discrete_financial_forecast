@@ -21,15 +21,26 @@ def visualize_transactions(transactions: pd.DataFrame, plan, label: str):
                 x='date',
                 y='abs_amount',
                 color='name',
-            ))
+                title=f'label(s) for Year {selected_year}',
+                labels={
+                    'date': f'{label} Statement Date',
+                    'abs_amount': f'Total Monthly {label} Amount',
+                    'name': f'{label} Name',
+                }
+            ), use_container_width=True)
 
         if st.checkbox(f'Total {label}(s)'):
             # TODO: Need to group here
             st.plotly_chart(px.bar(
                 displayed_transactions.groupby('name').sum().reset_index(drop=False),
                 x='name',
-                y='abs_amount',
+                y='float_amount',
                 color='name',
-            ))
+                title=f'Total {label} by Source',
+                labels={
+                    'name': f'{label} Name',
+                    'float_amount': f'Total {label} Amount ($)',
+                }
+            ), use_container_width=True)
     else:
         st.warning('The current plan to does have any expenses!')

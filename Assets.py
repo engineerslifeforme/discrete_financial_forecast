@@ -76,19 +76,21 @@ class BaseAsset:
     def configure(self, location):
         label = f'{self.asset_class} #{self.unique_id}'
         location.markdown('---')
-        self.name = location.text_input(f'{label} Name', value=self.name)
+        left, middle, right = location.columns(3)
+        self.name = left.text_input(f'{label} Name', value=self.name)
         self.starting_balance = self.calculate_starting_balance(
-            f2d(location.number_input(f'{label} locationarting Balance ($)', value=self.display_starting_balance, min_value=0.00, step=0.01))
+            f2d(middle.number_input(f'{label} Starting Balance ($)', value=self.display_starting_balance, min_value=0.00, step=0.01))
         )
-        if self.support_minimum:
-            self.enforce_minimum_balance = location.checkbox(f'{label} Enforce Minimum Balance?', value=self.enforce_minimum_balance)
-            if self.enforce_minimum_balance:
-                location.info('When active `Enforce Minimum Balance` will pull from other assets each month according to priority to maintain minimum')
-                self.minimum_balance = f2d(location.number_input(f'{label} Minimum Balance ($)', value=float(self.minimum_balance), step=0.01))
         if self.prioritized:
             self.priority = int(location.number_input(f'{label} Withdrawal Priority', value=self.priority, min_value=0, step=1))
         interest_profile_names = self.plan.interest_profile_names
-        self.interest_profile = location.selectbox(f'{label} Interest Profile', options=interest_profile_names, index=interest_profile_names.index(self.interest_profile))
+        self.interest_profile = right.selectbox(f'{label} Interest Profile', options=interest_profile_names, index=interest_profile_names.index(self.interest_profile))
+        if self.support_minimum:
+            left, right = location.columns(2)
+            self.enforce_minimum_balance = left.checkbox(f'{label} Enforce Minimum Balance?', value=self.enforce_minimum_balance, help='When active `Enforce Minimum Balance` will pull from other assets each month according to priority to maintain minimum')
+            if self.enforce_minimum_balance:
+                self.minimum_balance = f2d(right.number_input(f'{label} Minimum Balance ($)', value=float(self.minimum_balance), step=0.01))
+        
             
         self.balance = self.starting_balance
 
@@ -139,7 +141,7 @@ class BaseAsset:
                                 self.name,
                             ),
                             Change(
-                                'minimum_balanceb',
+                                'minimum_balance',
                                 self.name + '_min_balance',
                                 NEGATIVE_ONE * transfer_amount,
                                 statement_date,

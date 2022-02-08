@@ -12,12 +12,14 @@ from view_configuration import view_configuration
 from common import dstr, ZERO
 from visualize import visualize_transactions
 
+VERSION = '0.1.0'
+
 st.set_page_config(layout='wide')
 
-""" # Discrete Financial Forecast """
+f""" # Discrete Financial Forecast"""
+st.sidebar.markdown(f"v{VERSION}")
 
-disable_calculation = st.checkbox('Temporarily Disable Plan Calculation')
-st.info(""" The plan will recalculate with each change.  When quickly entering a lot
+disable_calculation = st.checkbox('Temporarily Disable Plan Calculation', help=""" The plan will recalculate with each change.  When quickly entering a lot
 of data this can get annoying.  The checkbox above will disable calculations (which
 will reduce but not completely eliminate this behavior).  Just don't
 forget to reactive or there will be no results.""")
@@ -58,7 +60,13 @@ if st.checkbox('Show Summary Account View?'):
         x='date',
         y='balance',
         color='account',
-    ))
+        title='Account, Asset, Liability Balances Over Time',
+        labels={
+            'date': 'Statement Date',
+            'balance': 'Balance ($)',
+            'account': 'Account, Asset, or Balance',
+        }
+    ), use_container_width=True)
 
 with st.expander('Expense Views'):
     st.markdown('## Expense Views')

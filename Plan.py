@@ -38,10 +38,10 @@ class Plan:
         self.assets = [Asset(i+1, self, **item) for i, item in enumerate(saved_plan.get('assets', []))]
         self.accounts = [Account(i+1, self, **item) for i, item in enumerate(saved_plan.get('accounts', []))]
         self.liabilities = [Liability(i+1, self, **item) for i, item in enumerate(saved_plan.get('liabilities', []))]
-        self.incomes = [Income(i, self, **item) for i, item in enumerate(saved_plan.get('incomes', []))]
-        self.expenses = [Expense(i, self, **item) for i, item in enumerate(saved_plan.get('expenses', []))]
-        self.transfers = [Transfer(i, self, **item) for i, item in enumerate(saved_plan.get('transfers', []))]
-        self.mortgages = [Mortgage(i, self.account_names, self.liability_names, **item) for i, item in enumerate(saved_plan.get('mortgages', []))]
+        self.incomes = [Income(i+1, self, **item) for i, item in enumerate(saved_plan.get('incomes', []))]
+        self.expenses = [Expense(i+1, self, **item) for i, item in enumerate(saved_plan.get('expenses', []))]
+        self.transfers = [Transfer(i+1, self, **item) for i, item in enumerate(saved_plan.get('transfers', []))]
+        self.mortgages = [Mortgage(i+1, self.account_names, self.liability_names, **item) for i, item in enumerate(saved_plan.get('mortgages', []))]
         self.all_lists = [
             ('Milestones', self.milestones),
             ('Interest Profiles', self.interest_profiles),
