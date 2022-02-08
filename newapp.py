@@ -12,7 +12,7 @@ from view_configuration import view_configuration
 from common import dstr, ZERO
 from visualize import visualize_transactions
 
-VERSION = '0.1.0'
+VERSION = '0.2.0'
 
 st.set_page_config(layout='wide')
 

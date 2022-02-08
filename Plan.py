@@ -10,9 +10,16 @@ from Mortgage import Mortgage
 from InterestProfile import InterestProfile
 from Milestone import Milestone
 
+PLAN_MAJOR = 0
+PLAN_MINOR = 1
+PLAN_VERSION = f'{PLAN_MAJOR}.{PLAN_MINOR}'
+
 class Plan:
 
     def __init__(self, saved_plan: dict):
+        # Only check version on populated plans
+        if len(saved_plan) > 0:
+            self.verify_version(saved_plan.get('version', None))
         self.configuration = Configuration(**saved_plan.get('configuration', {}))
         self.milestones = [Milestone(i+1, self.configuration.start, self.configuration.end, **item) for i, item in enumerate(saved_plan.get('milestones', []))]
         self.interest_profiles = [InterestProfile(i+1, self.configuration.start, self.configuration.end, **item) for i, item in enumerate(saved_plan.get('interest_profiles', []))]
@@ -56,6 +63,7 @@ class Plan:
 
     def to_dict(self):
         return {
+            'version': PLAN_VERSION,
             'configuration': self.configuration.to_dict(),
             'milestones': [milestone.to_dict() for milestone in self.milestones],
             'interest_profiles': [profile.to_dict() for profile in self.interest_profiles],
@@ -67,6 +75,19 @@ class Plan:
             'transfers': [transfer.to_dict() for transfer in self.transfers],
             'mortgages': [mortgage.to_dict() for mortgage in self.mortgages],
         }
+
+    def verify_version(self, version: str):
+        if version is None:
+            st.error('Configuration file does not contain version!  Errors may occur.  Consider restarting plan and re-saving.')
+        else:
+            try:
+                major, minor = version.split('.')
+                if int(major) != PLAN_MAJOR:
+                    st.error(f'Configuration file version {version} does not match the latest version {PLAN_VERSION}.  Errors may occur.  Consider restarting plan and re-saving.')
+                elif int(minor) != PLAN_MINOR:
+                    st.warning(f'Configuration file version {version} appears to be a little old (latest is {PLAN_VERSION}).  Recommend re-saving the file.')
+            except ValueError:
+                st.error(f'Configuration file version {version} does not have the proper format, e.g. X.Y! Errors may occur.  Consider restarting plan and re-saving.')
 
     @property
     def account_names(self) -> list:
