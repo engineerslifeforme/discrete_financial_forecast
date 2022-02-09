@@ -12,8 +12,7 @@ class Configuration:
         self,
         start_year: int = None,
         start_month: int = 0,
-        duration: int = 10,
-        default_inflation: float = 2.0):
+        duration: int = 10):
 
         if start_year is None:
             start_year = datetime.datetime.today().year
@@ -21,7 +20,6 @@ class Configuration:
         self.start_year = start_year
         self.start_month = start_month
         self.duration = duration
-        self.default_inflation = default_inflation/100.0
 
     @property
     def end_year(self) -> int:
@@ -40,24 +38,18 @@ class Configuration:
         return datetime.date(self.end_year, self.end_month+1, 1)
 
     @property
-    def display_default_inflation(self) -> float:
-        return self.default_inflation*100.0
-
-    @property
     def display_date_range(self) -> str:
         return f'Plan configured from `{self.start_year}-{self.start_month+1}` to `{self.end_year}-{self.end_month+1}`'
 
     @property
     def summary(self) -> str:
-        return f""" - `{self.start_year}-{self.start_month+1}` to `{self.end_year}-{self.end_month+1}` ({self.duration} Years)
-- Default Inflation: {self.display_default_inflation}%"""
+        return f"""`{self.start_year}-{self.start_month+1}` to `{self.end_year}-{self.end_month+1}` ({self.duration} Years)"""
 
     def to_dict(self) -> dict:
         return {
             'start_year': self.start_year,
             'start_month': self.start_month,
             'duration': self.duration,
-            'default_inflation': self.display_default_inflation,
         }
 
     def configure(self):
@@ -66,7 +58,6 @@ class Configuration:
         self.start_month = get_month(label='Starting Month', holder=middle, default=self.start_month)
         self.duration = int(right.number_input(label='Plan Duration (years)', value=self.duration, min_value=1, step=1))
         st.markdown(self.display_date_range)
-        self.default_inflation = st.number_input('Inflation (%/year)', value=self.display_default_inflation, step=0.01)/100.0
         
 
         

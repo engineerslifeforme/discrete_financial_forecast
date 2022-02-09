@@ -17,7 +17,7 @@
 11. Piece-wise interest
 12. ----- Milestones
 13. ----- Future value calculation error
-14. Remove or incorporate default inflation
+14. ---- Remove or incorporate default inflation
 15. Delete items
 16. Check bounds on date ranges
 17. errors do not show when cache hit occurs
