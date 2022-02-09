@@ -17,6 +17,13 @@ VERSION = '0.2.0'
 st.set_page_config(layout='wide')
 
 f""" # Discrete Financial Forecast"""
+
+st.sidebar.markdown('Thanks for using!')
+st.sidebar.markdown(
+    '<a href="https://www.buymeacoffee.com/creativerigor" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>',
+    unsafe_allow_html=True,
+)
+st.sidebar.markdown('---')
 st.sidebar.markdown(f"v{VERSION}")
 
 disable_calculation = st.checkbox('Temporarily Disable Plan Calculation', help=""" The plan will recalculate with each change.  When quickly entering a lot
@@ -77,4 +84,5 @@ with st.expander('Income Views'):
     st.markdown('## Income Views')
     incomes = tranactions.loc[tranactions['amount'] > ZERO]
     visualize_transactions(incomes, plan, 'Income')
-    
+
+
