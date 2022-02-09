@@ -9,6 +9,24 @@ from common import f2d, mortgage_payment, ZERO, NEGATIVE_ONE
 from Change import Change
 
 class Mortgage:
+    description = """`Mortgages` are a specialized type of transaction/`Expense`.  They offer
+a more intuitive interface to define this special type of expense.
+
+- `Original Length`: The original length in years of the mortgage (NOT the remaining time)
+- `Rate`: The APR of the `Mortgage`
+- `Original Loan Amount`: The original amounnt (NOT the remaining balance, which is the balance of the associated `Liability`)
+- `Liability`: The `Liability` into which the principal portion of the `Mortgage` payment should be added.
+- `Account Payment Source`: The `Account` from which the full `Mortgage` payment (principal and interest) should be taken.
+- `Extra Principal`: Additional principal that will both increase the total payment and the principal payment toward the `Liability`.  0 is fine.
+
+As implicitly stated above, the total mortgage payment will be calculated based on the original `Mortgage` details.
+Each month during the forecast, the interest portion of the payment will be calculated based on the remaining
+balance of the `Liability`.  The interest portion is effectively an `Expense` resulting in a negative effect
+on Net Worth.  The principal portion of the payment will reduce the associated `Liability` resulting in
+net 0 change in Net Worth (because the money was removed from the `Source Account`).  The `Mortgage`
+payment will be executed in this fashion until the remaining balance becomes less than the payment.
+At this point the `Liability` will be paid off (i.e. balance of 0), and no further payments will
+be made."""
 
     def __init__(
         self,

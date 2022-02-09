@@ -242,6 +242,17 @@ class Transaction:
 
 class Income(Transaction):
     transaction_type = 'Income'
+    description = """`Income` sources define a periodic or single occurence positive transaction to an `Account`.
+    
+- `Interest Profile` - Each transaction will be adjusted according to the selected `Interest Profile`.
+- `Frequency` - All Monthly and shorter frequencies will be converted to the equivalent Monthly cost since the forecast is executed on a monthly period.
+- `Amount` - The amount of money added to the `Account` at the selected `Frequency`.
+- `Destination Account` - The `Account` into which the `Amount` will be deposited.
+- `Duration` - When the `Income` transaction should be executed, e.g. Forever, starting on a date/`Milestone`, between dates, etc.
+
+**Note:** `Amount` should be set according to today's value.  The first (and following) transactions of an `Income` 
+set to begin in 10 years with a positive, non-zero `Interest Profile` will be calculated to the Future Value with
+compounding interest, i.e. it will be greater than the literal `Amount` entered."""
 
     def set_source_account(self, source_account: str, asset_list: list) -> str:
         return None
@@ -262,6 +273,8 @@ class Income(Transaction):
 
 class Expense(Transaction):
     transaction_type = 'Expense'
+    description = """ `Expenses` are exactly the same as `Income` except that their value will be
+removed from the balance of the `Source Account`."""
 
     @property
     def active_account(self) -> str:
@@ -293,6 +306,12 @@ class Expense(Transaction):
 
 class Transfer(Transaction):
     transaction_type = 'Transfer'
+    description = """`Transfers` are exactly the same as both `Income` and `Expense` except that there is both a
+`Source Account` and `Destination Account`.  `Transfers` will result in 0 net change in the Net Worth, and they
+are simply moving money between `Accounts`.
+
+`Income` sources could be setup such that `Transfers` may be largely unnecessary, but use of `Transfers` may
+make the forecast data easier to input and operation slightly more intuitive."""
 
     def set_source_account(self, source_account: str, asset_list: list) -> str:
         if source_account is None:

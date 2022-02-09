@@ -28,7 +28,7 @@ def configure_constants(constants: dict) -> dict:
 
 def view_configuration() -> Plan:
     st.sidebar.markdown('# Editor Configuration')
-    EDITOR_MODES = ['GUI Configuration', 'Manual Configuration', 'View Only', 'Documentation']
+    EDITOR_MODES = ['GUI Configuration', 'Manual Configuration', 'View Only', 'Plan Comparison', 'Documentation']
     editor_mode = st.sidebar.radio(' Editor Mode', options=EDITOR_MODES)
 
     previous_plan_upload = st.file_uploader('Previous Plan Upload')
@@ -66,7 +66,12 @@ def view_configuration() -> Plan:
         data = Template(data).render(constants)
         plan = Plan(yaml.safe_load(data))
         plan_download_data = plan_content
-    elif editor_mode == EDITOR_MODES[3]: # Documentation
+    elif editor_mode == EDITOR_MODES[3]: # Plan Comparison
+        st.markdown(""" ## Plan Comparison Coming Soon!
+        
+This page will provide the ability to compare multiple forecast config files""")
+        st.stop()
+    elif editor_mode == EDITOR_MODES[4]: # Documentation
         with open('docs.md', 'r') as fh:
             st.markdown(fh.read())
             st.stop()

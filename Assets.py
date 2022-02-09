@@ -156,14 +156,19 @@ class BaseAsset:
 
 class Asset(BaseAsset):
     asset_class = 'Asset'
+    description = """`Assets` are very similar, but more limited than `Accounts`.  They
+cannot be modified and simply change value according to their selected `Interest Profile`.
+They exist solely to contribute to Net Worth.
+
+`Starting Balance` is the value of the asset at the beginning of the simulation."""
 
 class Account(BaseAsset):
     asset_class = 'Account'
     support_minimum = True
     prioritized = True
-    description = """`Accounts` are a location to add `Income`, pay `Expenses`, or transfer from/to for `Transfers`.
+    description = """`Accounts` are a location to add `Income` into, pay `Expenses` from, or transfer from/into for `Transfers`.
 
-They have an `Interest Profile` that is assessed at the beginning of each forecast month based on the balance from the previous month
+`Accounts` have an `Interest Profile` that is assessed at the beginning of each forecast month based on the balance from the previous month
 (prior to that month's transactions).
 
 The `Starting Balance` is the balance of the account at the beginning of the forecast.
@@ -171,12 +176,22 @@ The `Starting Balance` is the balance of the account at the beginning of the for
 `Enforce Minimum Balance` can be used to perform automatic withdrawals.  When active, the app will withdraw from other `Accounts` each month
 in the (numerically smallest to largest) `Withdrawal Priority` order to maintain the defined `Minimum Balance`.
 
-`Enforce Minimum Balance` is optional and transfers between accounts can be explicitly controlled using the `Transfers` section.
+`Enforce Minimum Balance` is optional and transfers between accounts can instead (or in addition to) be explicitly controlled using the `Transfers` section.
 
 **At least 1 `Account` is required to enter `Income`, `Expenses`, or `Transfers`.**"""
 
 class Liability(BaseAsset):
     asset_class = 'Liability'
+    description = """`Liabilities` are very similar to both `Accounts` and `Assets`.  In terms of configuration,
+`Liabilities` are exactly the same as `Assets` being defined by an `Interest Profile` and `Starting Balance`.
+
+**Note:** The balance will be treated as negative, i.e., subtracted from Net Worth.  This is the opposite of the
+positive contribution of `Assets`.
+
+Additionally, `Liabilities` can be reduced through an associated `Mortgage` below.  In the specific case of
+`Mortgage` `Liabilities`, the remaining balance of the `Mortgage` should be used as the `Starting Balance`
+as opposed to the original `Mortgage` amount."""
+
 
     def calculate_starting_balance(self, starting_balance: Decimal) -> Decimal:
         return NEGATIVE_ONE * starting_balance
