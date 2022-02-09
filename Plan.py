@@ -155,10 +155,11 @@ class Plan:
             with st.expander(f'{asset_name}(s)'):
                 new_list = []
                 header_info = st.empty()
+                st.markdown(AssetType.description)
                 list_placeholder = st.container()
                 st.markdown('---')
                 quantity = int(st.number_input(f'{asset_name} Quantity', min_value=min_quantity, value=max(len(asset_group), min_quantity)))
-                header_info = header_info.markdown(f'{quantity} Items defined for {asset_name}')
+                header_info = header_info.info(f'{quantity} Items defined for {asset_name}')
                 for i in range(quantity):
                     try:
                         asset = asset_group[i]

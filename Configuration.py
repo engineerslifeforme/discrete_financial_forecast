@@ -43,7 +43,7 @@ class Configuration:
 
     @property
     def summary(self) -> str:
-        return f"""`{self.start_year}-{self.start_month+1}` to `{self.end_year}-{self.end_month+1}` ({self.duration} Years)"""
+        return f"""Configuration: `{self.start_year}-{self.start_month+1}` to `{self.end_year}-{self.end_month+1}` ({self.duration} Years)"""
 
     def to_dict(self) -> dict:
         return {
@@ -53,6 +53,10 @@ class Configuration:
         }
 
     def configure(self):
+        st.markdown(""" This section simply configures the timeframe for your forecast.  The forecast will begin on the
+selected `Starting Year` and `Starting Month` and run through the `Plan Duration` of years in monthly increments.
+
+---""")
         left, middle, right = st.columns(3)
         self.start_year = int(left.number_input('Starting Year', min_value=1900, step=1, value=self.start_year))
         self.start_month = get_month(label='Starting Month', holder=middle, default=self.start_month)

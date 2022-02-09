@@ -16,7 +16,26 @@ VERSION = '0.2.0'
 
 st.set_page_config(layout='wide')
 
-f""" # Discrete Financial Forecast"""
+f""" # Discrete Financial Forecast """
+
+with st.expander('Introduction', expanded=True):
+    st.markdown("""Welcome to the Discrete Financial Forecast webapp.  This app attempts to perform a [Discrete-event simulation](https://en.wikipedia.org/wiki/Discrete-event_simulation)
+of your finances (don't be intimidated).  The goal is to make very few assumptions about your data, so the "accuracy"
+will depend on the level of detail you provide and how well you can predict your own financial behavior.
+
+#### Getting Started 
+
+Simply expand each of the categories below and begin entering your data.  There will be additional instructions
+in each section.
+
+This app does not retain any of your data once you leave, so you are encouraged to periodically save (`Configuration Download (YAML)`)
+a configuration file for your forecast.  This file can then be uploaded to restart/review your plan at a later time using the
+`Previous Plan Upload`.
+
+Once you have some data entered, you can begin viewing in the `Results Visualization` section below.
+
+If you run into an issue, please report it here: [Github Repo](https://github.com/engineerslifeforme/discrete_financial_forecast/issues).
+Or you can review the source code if you are into that sort of thing.""")
 
 st.sidebar.markdown('Thanks for using!')
 st.sidebar.markdown(

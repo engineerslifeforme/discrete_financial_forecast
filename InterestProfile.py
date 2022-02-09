@@ -156,6 +156,19 @@ PHASE_MAP = {
 }      
 
 class InterestProfile:
+    description = """ `Interest Profiles` allow the application of different rates of appreciation and depreciation
+to `Income`, `Expense`, and `Transfer` transactions as well as the value of `Accounts`, `Assets`, and `Liabilities`.
+
+For example, a "Groceries" `Expense` can be set to an `Interest Profile` of "Inflation" causing the bill to increase
+over time through the forecast at the defined %/year interest rate.  Similarly (and hopefully at a minimum), `Income` sources
+can simultaneously be assigned "Inflation" causing the Income to proportionally grow over time.
+
+Some `Liabilities` such as mortgages and loans do not increase over time and therefore can use a "No Interest" `Interest Profile`.
+
+`Accounts` that are invested can use a different (and hopefully higher) appreciation rate `Interest Profile`.
+
+** It is recommended (but not required) that you do not remove or rename the "Inflation" and "No Interest" `Interest Profiles`.
+Do feel free to change the "Inflation" rate if you disagree with the default.**"""
 
     def __init__(
         self,

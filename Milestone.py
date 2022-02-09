@@ -5,6 +5,10 @@ import datetime
 import streamlit as st
 
 class Milestone:
+    description = """`Milestones` are simply named dates that can be used later in the definition of `Income`, `Expenses` and `Transfers`.
+        
+**Milestones are optional**
+"""
 
     def __init__(
         self,
@@ -24,7 +28,7 @@ class Milestone:
         if date is None:
             self.date = self.configuration_start
         else:
-            self.date = date
+            self.date = date        
 
     def to_dict(self) -> dict:
         return {

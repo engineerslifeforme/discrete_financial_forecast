@@ -161,6 +161,19 @@ class Account(BaseAsset):
     asset_class = 'Account'
     support_minimum = True
     prioritized = True
+    description = """`Accounts` are a location to add `Income`, pay `Expenses`, or transfer from/to for `Transfers`.
+
+They have an `Interest Profile` that is assessed at the beginning of each forecast month based on the balance from the previous month
+(prior to that month's transactions).
+
+The `Starting Balance` is the balance of the account at the beginning of the forecast.
+
+`Enforce Minimum Balance` can be used to perform automatic withdrawals.  When active, the app will withdraw from other `Accounts` each month
+in the (numerically smallest to largest) `Withdrawal Priority` order to maintain the defined `Minimum Balance`.
+
+`Enforce Minimum Balance` is optional and transfers between accounts can be explicitly controlled using the `Transfers` section.
+
+**At least 1 `Account` is required to enter `Income`, `Expenses`, or `Transfers`.**"""
 
 class Liability(BaseAsset):
     asset_class = 'Liability'
