@@ -21,7 +21,7 @@ def visualize_transactions(transactions: pd.DataFrame, plan, label: str):
                 x='date',
                 y='abs_amount',
                 color='name',
-                title=f'label(s) for Year {selected_year}',
+                title=f'{label}(s) for Year {selected_year}',
                 labels={
                     'date': f'{label} Statement Date',
                     'abs_amount': f'Total Monthly {label} Amount',
@@ -30,7 +30,6 @@ def visualize_transactions(transactions: pd.DataFrame, plan, label: str):
             ), use_container_width=True)
 
         if st.checkbox(f'Total {label}(s)'):
-            # TODO: Need to group here
             st.plotly_chart(px.bar(
                 displayed_transactions.groupby('name').sum().reset_index(drop=False),
                 x='name',

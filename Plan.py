@@ -27,16 +27,14 @@ class Plan:
             self.interest_profiles.extend([                
                 InterestProfile(
                     1,
-                    self.configuration.start,
-                    self.configuration.end,
+                    self.configuration,
                     name='No Interest',
                     profile_type='Constant',
                     profile_phases=[{'phase_type': 'Constant', 'rate': 0.0}]
                 ),
                 InterestProfile(
                     2,
-                    self.configuration.start, 
-                    self.configuration.end, 
+                    self.configuration,
                     name='Inflation', 
                     profile_type='Constant',
                     profile_phases=[{'phase_type': 'Constant', 'rate': 2.0}]
@@ -50,15 +48,15 @@ class Plan:
         self.transfers = [Transfer(i+1, self, **item) for i, item in enumerate(saved_plan.get('transfers', []))]
         self.mortgages = [Mortgage(i+1, self.account_names, self.liability_names, **item) for i, item in enumerate(saved_plan.get('mortgages', []))]
         self.all_lists = [
-            ('Milestones', self.milestones),
-            ('Interest Profiles', self.interest_profiles),
-            ('Asset', self.assets),
-            ('Account', self.accounts),
-            ('Liability', self.liabilities),
-            ('Income', self.incomes),
-            ('Expense', self.expenses),
-            ('Transfer', self.transfers),
-            ('Mortgage', self.mortgages),
+            ('Milestones', 'milestones'),
+            ('Interest Profiles', 'interest_profiles'),
+            ('Asset', 'assets'),
+            ('Account', 'accounts'),
+            ('Liability', 'liabilities'),
+            ('Income', 'incomes'),
+            ('Expense', 'expenses'),
+            ('Transfer', 'transfers'),
+            ('Mortgage', 'mortgages'),
         ]
 
     def to_dict(self):
@@ -107,7 +105,7 @@ class Plan:
 
     @property
     def table_summary(self) -> pd.DataFrame:
-        data = [len(item_list) for _, item_list in self.all_lists]
+        data = [len(getattr(self, attribute_name)) for _, attribute_name in self.all_lists]
         index = [name for name, _ in self.all_lists]
         frame = pd.DataFrame(data, index=index)
         frame.columns = ['Quantity']
@@ -123,7 +121,7 @@ class Plan:
         return Builder(i, self.account_names, self.liability_names)
 
     def interest_profile_builder(self, i: int, Builder):
-        return Builder(i, self.configuration.start, self.configuration.end)
+        return Builder(i, self.configuration)
 
     def get_account(self, account_name: str) -> Account:
         return self.accounts[self.account_names.index(account_name)]

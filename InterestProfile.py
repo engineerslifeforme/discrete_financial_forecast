@@ -30,20 +30,12 @@ class InterestPhase:
         self,
         unique_id: int,
         prepend: str,
-        profile_start: datetime.date,
-        profile_end: datetime.date,        
-        start: datetime.date = None,
-        end: datetime.date = None,
         phase_type: str = PHASE_TYPES[0],
         rate: float = DEFAULT_RATE):
 
         self.unique_id = unique_id
-        self.profile_start = profile_start
-        self.profile_end = profile_end
         self.phase_type = phase_type
         self.rate = rate
-        self.start = start
-        self.end = end
         self.prepend = prepend
 
     def to_dict(self) -> dict:
@@ -51,29 +43,11 @@ class InterestPhase:
             'phase_type': self.phase_type,
             'rate': self.rate,
         }
-        if self.start is not None:
-            data['start'] = self.start
-        if self.end is not None:
-            data['end'] = self.end
         data = self.update_dict(data)
         return data
 
     def update_dict(self, data: dict) -> dict:
         return data
-
-    @property
-    def _start(self) -> datetime.date:
-        if self.start is None:
-            return self.profile_start
-        else:
-            return self.start
-
-    @property
-    def _end(self) -> datetime.date:
-        if self.end is None:
-            return self.profile_end
-        else:
-            return self.end
 
     @property
     def label(self) -> str:
@@ -88,9 +62,9 @@ class InterestPhase:
 class ConstantPhase(InterestPhase):
     base_label = 'Constant'
 
-    def get_profile(self) -> list:
-        start = date_id(self._start)
-        end = date_id(self._end)
+    def get_profile(self, start:datetime.date, end:datetime.date) -> list:
+        start = date_id(start)
+        end = date_id(end)
         current = start
         profile = []
         while current < end:
@@ -137,9 +111,9 @@ class LinearPhase(InterestPhase):
         self.start_rate = left.number_input(f'{self.label} Start Rate (%/year)', value=self.start_rate, step=0.01)
         self.end_rate = right.number_input(f'{self.label} End Rate (%/year)', value=self.end_rate, step=0.01)
 
-    def get_profile(self) -> list:
-        start = date_id(self._start)
-        end = date_id(self._end)
+    def get_profile(self, start: datetime.date, end: datetime.date) -> list:
+        start = date_id(start)
+        end = date_id(end)
 
         increment = (self._end_rate - self._start_rate) / (end - start)
 
@@ -175,23 +149,30 @@ Do feel free to change the "Inflation" rate if you disagree with the default.**
     def __init__(
         self,
         unique_id: int,
-        start: datetime.date,
-        end: datetime.date,
+        configuration,
         name: str = None,
         profile_type: str = PROFILE_TYPES[0],
         profile_phases: list = None):
         
         self.unique_id = unique_id
+        self.configuration = configuration
         self.label = f'Interest Profile #{self.unique_id}'
-        self.start = start
-        self.end = end
         if name is None:
             self.name = f'Interest Profile #{unique_id}'
         else:
             self.name = name
         self.profile_type = profile_type
         self.interest_phases = self.initialize_phases(profile_phases)        
+        
 
+    @property
+    def start(self) -> datetime.date:
+        return self.configuration.start
+
+    @property
+    def end(self) -> datetime.date:
+        return self.configuration.end
+    
     def initialize_phases(self, phases: list) -> list:
         new_list = []
         if phases is not None:
@@ -199,8 +180,6 @@ Do feel free to change the "Inflation" rate if you disagree with the default.**
                 new_list.append(PHASE_MAP[phase['phase_type']](
                     i+1,
                     self.label,
-                    self.start,
-                    self.end,
                     **phase,
                 ))
         else:
@@ -217,7 +196,7 @@ Do feel free to change the "Inflation" rate if you disagree with the default.**
     def get_profile(self) -> list:
         profile = []
         for phase in self.interest_phases:
-            profile.extend(phase.get_profile())
+            profile.extend(phase.get_profile(self.start, self.end))
         return profile
 
     def configure(self, location):
@@ -240,8 +219,6 @@ Do feel free to change the "Inflation" rate if you disagree with the default.**
                 phase = ConstantPhase(
                     1,
                     self.label,
-                    self.start,
-                    self.end,
                 )
                 phase.configure(location)
                 self.interest_phases = [phase]
@@ -259,8 +236,6 @@ Do feel free to change the "Inflation" rate if you disagree with the default.**
                 phase = LinearPhase(
                     1,
                     self.label,
-                    self.start,
-                    self.end,
                 )
                 phase.configure(location)
                 self.interest_phases = [phase]

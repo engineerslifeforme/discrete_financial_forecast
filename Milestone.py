@@ -13,14 +13,12 @@ class Milestone:
     def __init__(
         self,
         unique_id: int,
-        configuration_start: datetime.date,
-        configuration_end: datetime.date,
+        configuration,
         name: str = None,
         date: datetime.date = None):
 
         self.unique_id = unique_id
-        self.configuration_start = configuration_start
-        self.configuration_end = configuration_end
+        self.configuration = configuration
         if name is None:
             self.name = f'Milestone #{unique_id}'
         else:
@@ -28,7 +26,15 @@ class Milestone:
         if date is None:
             self.date = self.configuration_start
         else:
-            self.date = date        
+            self.date = date
+
+    @property
+    def configuration_start(self) -> datetime.date:
+        return self.configuration.start
+    
+    @property
+    def configuration_end(self) -> datetime.date:
+        return self.configuration.end
 
     def to_dict(self) -> dict:
         return {
