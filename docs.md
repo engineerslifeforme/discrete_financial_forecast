@@ -4,6 +4,10 @@ Real documentation is coming soon.  Only a change log for now.
 
 ## Change Log
 
+### `1.0.1`
+
+fix for issue of content not being under expander and additional help text on the summary plot
+
 ### `1.0.0`
 
 Added a lot more text context around sections.  Plan to "release".

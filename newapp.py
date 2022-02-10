@@ -100,7 +100,12 @@ with additional options, and an expand icon to view the graph(s) using the full 
 if len(tranactions) < 1:
     st.warning('Please add some income or expenses to see results Visualization')
 else:
-    if st.checkbox('Show Summary Account View?'):
+    if st.checkbox('Show Balance Summary View?'):
+
+        st.markdown("""## Balance Summary View
+        
+`TOTAL` is the periodic sum of all `Accounts`, `Assets`, and `Liabilities` (negative value),
+so Net Worth.""")
         
         st.plotly_chart(px.line(
             balance_log,
@@ -123,7 +128,7 @@ else:
     with st.expander('Income Views'):
         st.markdown('## Income Views')
         incomes = tranactions.loc[tranactions['amount'] > ZERO]
-    visualize_transactions(incomes, plan, 'Income')
+        visualize_transactions(incomes, plan, 'Income')
 
 """ # Feedback
 
