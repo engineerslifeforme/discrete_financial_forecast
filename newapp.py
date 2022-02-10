@@ -12,7 +12,7 @@ from view_configuration import view_configuration
 from common import dstr, ZERO
 from visualize import visualize_transactions
 
-VERSION = '0.2.0'
+VERSION = '1.0.0'
 
 st.set_page_config(layout='wide')
 
@@ -35,7 +35,12 @@ a configuration file for your forecast.  This file can then be uploaded to resta
 Once you have some data entered, you can begin viewing in the `Results Visualization` section below.
 
 If you run into an issue, please report it here: [Github Repo](https://github.com/engineerslifeforme/discrete_financial_forecast/issues).
-Or you can review the source code if you are into that sort of thing.""")
+Or you can review the source code if you are into that sort of thing.
+
+#### Disclaimer
+
+I am not a financial professional and:
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. """)
 
 st.sidebar.markdown('Thanks for using!')
 st.sidebar.markdown(
@@ -94,36 +99,38 @@ with additional options, and an expand icon to view the graph(s) using the full 
 
 if len(tranactions) < 1:
     st.warning('Please add some income or expenses to see results Visualization')
-    st.stop()
+else:
+    if st.checkbox('Show Summary Account View?'):
+        
+        st.plotly_chart(px.line(
+            balance_log,
+            x='date',
+            y='balance',
+            color='account',
+            title='Account, Asset, Liability Balances Over Time',
+            labels={
+                'date': 'Statement Date',
+                'balance': 'Balance ($)',
+                'account': 'Account, Asset, or Balance',
+            }
+        ), use_container_width=True)
 
-if st.checkbox('Show Summary Account View?'):
-    
-    st.plotly_chart(px.line(
-        balance_log,
-        x='date',
-        y='balance',
-        color='account',
-        title='Account, Asset, Liability Balances Over Time',
-        labels={
-            'date': 'Statement Date',
-            'balance': 'Balance ($)',
-            'account': 'Account, Asset, or Balance',
-        }
-    ), use_container_width=True)
+    with st.expander('Expense Views'):
+        st.markdown('## Expense Views')
+        expenses = tranactions.loc[tranactions['amount'] < ZERO]
+        visualize_transactions(expenses, plan, 'Expense')
 
-with st.expander('Expense Views'):
-    st.markdown('## Expense Views')
-    expenses = tranactions.loc[tranactions['amount'] < ZERO]
-    visualize_transactions(expenses, plan, 'Expense')
-
-with st.expander('Income Views'):
-    st.markdown('## Income Views')
-    incomes = tranactions.loc[tranactions['amount'] > ZERO]
+    with st.expander('Income Views'):
+        st.markdown('## Income Views')
+        incomes = tranactions.loc[tranactions['amount'] > ZERO]
     visualize_transactions(incomes, plan, 'Income')
 
 """ # Feedback
 
 Feedback in welcome in the form of  [Github Issues](https://github.com/engineerslifeforme/discrete_financial_forecast/issues)
-on this project.  creativerigor [at] gmail.com is also checked from time to time."""
+on this project.  creativerigor [at] gmail.com is also checked from time to time.
+
+While [Buy me a coffee](https://www.buymeacoffee.com/creativerigor) may incentivize requested features, submitting the 
+issue first just to check whether it is feasible and/or makes sense is recommended.  Expectation management."""
 
 
