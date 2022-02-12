@@ -5,7 +5,10 @@ from urllib.parse import quote
 def query_to_plan(params: dict) -> dict:
     saved_plan = {}
     for key in params:
-        table, field_name = key.split('__')
+        try:
+            table, field_name = key.split('__')
+        except ValueError:
+            continue
         if table == 'configuration':
             if table not in saved_plan:
                 saved_plan[table] = {field_name: convert_value(params[key][0])}
