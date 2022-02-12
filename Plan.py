@@ -21,8 +21,8 @@ class Plan:
         if len(saved_plan) > 0:
             self.verify_version(saved_plan.get('version', None))
         self.configuration = Configuration(**saved_plan.get('configuration', {}))
-        self.milestones = [Milestone(i+1, self.configuration.start, self.configuration.end, **item) for i, item in enumerate(saved_plan.get('milestones', []))]
-        self.interest_profiles = [InterestProfile(i+1, self.configuration.start, self.configuration.end, **item) for i, item in enumerate(saved_plan.get('interest_profiles', []))]
+        self.milestones = [Milestone(i+1, self.configuration, **item) for i, item in enumerate(saved_plan.get('milestones', []))]
+        self.interest_profiles = [InterestProfile(i+1, self.configuration, **item) for i, item in enumerate(saved_plan.get('interest_profiles', []))]
         if len(self.interest_profiles) < 1:
             self.interest_profiles.extend([                
                 InterestProfile(
