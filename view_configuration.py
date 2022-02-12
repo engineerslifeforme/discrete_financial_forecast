@@ -8,6 +8,7 @@ from jinja2 import Template
 
 from Plan import Plan
 from YamlHandler import split_constants, load_yaml
+from query_to_plan import query_to_plan
 
 def configure_constants(constants: dict) -> dict:
     new_constants = {}
@@ -37,14 +38,22 @@ def view_configuration() -> Plan:
     else:
         upload_content = None
 
+    query_plan_dict = query_to_plan(st.experimental_get_query_params())
+    #st.write(query_plan_dict)
 
     if editor_mode == EDITOR_MODES[0]: #GUI
+        check_version = True
         if upload_content is not None:
             dict_plan = load_yaml(upload_content)
+            st.info('Using uploaded config file, ignoring URL query parameters')
+        elif len(query_plan_dict) > 0:
+            dict_plan = query_plan_dict
+            check_version = False
+            st.info('Using query parameters from URL')
         else:
             dict_plan = {}
 
-        plan = Plan(dict_plan)
+        plan = Plan(dict_plan, check_version=False)
         plan.configure()
         plan_download_data = yaml.safe_dump(plan.to_dict())
     elif editor_mode in [EDITOR_MODES[1], EDITOR_MODES[2]]: # Config or None

@@ -11,8 +11,9 @@ from calculate import calculate
 from view_configuration import view_configuration
 from common import dstr, ZERO
 from visualize import visualize_transactions
+from query_to_plan import plan_to_query
 
-VERSION = '1.0.2'
+VERSION = '1.0.3'
 
 st.set_page_config(page_title='Discrete Financial Forecast', layout='wide')
 
@@ -137,5 +138,7 @@ on this project.  creativerigor [at] gmail.com is also checked from time to time
 
 While [Buy me a coffee](https://www.buymeacoffee.com/creativerigor) may incentivize requested features, submitting the 
 issue first just to check whether it is feasible and/or makes sense is recommended.  Expectation management."""
+
+#st.markdown(f'[link](http://localhost:8501/{plan_to_query(plan.to_dict())})')
 
 

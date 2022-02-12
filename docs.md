@@ -6,6 +6,12 @@ Real documentation is coming soon.  Only a change log for now.
 
 ### `1.0.2`
 
+- Added page title
+- Fixed bug on saved InterestProfiles and milestones
+- Added in beta URL query parsing
+
+### `1.0.2`
+
 - Fixed bug in interest profiles and their dates, similar problem in milestones
 - Fixed bug in summary table
 - Fixed title in graph

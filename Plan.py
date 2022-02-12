@@ -16,9 +16,9 @@ PLAN_VERSION = f'{PLAN_MAJOR}.{PLAN_MINOR}'
 
 class Plan:
 
-    def __init__(self, saved_plan: dict):
+    def __init__(self, saved_plan: dict, check_version: bool = True):
         # Only check version on populated plans
-        if len(saved_plan) > 0:
+        if len(saved_plan) > 0 and check_version:
             self.verify_version(saved_plan.get('version', None))
         self.configuration = Configuration(**saved_plan.get('configuration', {}))
         self.milestones = [Milestone(i+1, self.configuration, **item) for i, item in enumerate(saved_plan.get('milestones', []))]
