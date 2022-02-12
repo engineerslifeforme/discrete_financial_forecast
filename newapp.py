@@ -14,7 +14,7 @@ from visualize import visualize_transactions
 
 VERSION = '1.0.2'
 
-st.set_page_config(layout='wide')
+st.set_page_config(page_title='Discrete Financial Forecast', layout='wide')
 
 f""" # Discrete Financial Forecast """
 
