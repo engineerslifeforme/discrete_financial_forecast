@@ -13,7 +13,7 @@ from common import dstr, ZERO
 from visualize import visualize_transactions
 from query_to_plan import plan_to_query, plan_to_compressed_str
 
-VERSION = '1.0.4'
+VERSION = '1.0.5'
 
 st.set_page_config(page_title='Discrete Financial Forecast', layout='wide')
 
@@ -139,10 +139,10 @@ on this project.  creativerigor [at] gmail.com is also checked from time to time
 While [Buy me a coffee](https://www.buymeacoffee.com/creativerigor) may incentivize requested features, submitting the 
 issue first just to check whether it is feasible and/or makes sense is recommended.  Expectation management."""
 
-"""# Shareable Link """
-st.markdown(f'Copy this link to share with others: [Shareable Link](http://localhost:8501/{plan_to_compressed_str(plan)})')
+#"""# Shareable Link """
+#st.markdown(f'Copy this link to share with others: [Shareable Link](http://localhost:8501/{plan_to_compressed_str(plan)})')
 
-st.markdown("""**Note:** 
+#st.markdown("""**Note:** 
 
-- This link simply allows others to see a copy of the forecast, i.e., changes made by others will not be reflected back.
-- This link changes any time the plan is changed, i.e., you cannot just bookmark it.""")
+#- This link simply allows others to see a copy of the forecast, i.e., changes made by others will not be reflected back.
+#- This link changes any time the plan is changed, i.e., you cannot just bookmark it.""")
