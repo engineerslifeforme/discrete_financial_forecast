@@ -11,7 +11,7 @@ from calculate import calculate
 from view_configuration import view_configuration
 from common import dstr, ZERO
 from visualize import visualize_transactions
-from query_to_plan import plan_to_query
+from query_to_plan import plan_to_query, plan_to_compressed_str
 
 VERSION = '1.0.3'
 
@@ -139,6 +139,8 @@ on this project.  creativerigor [at] gmail.com is also checked from time to time
 While [Buy me a coffee](https://www.buymeacoffee.com/creativerigor) may incentivize requested features, submitting the 
 issue first just to check whether it is feasible and/or makes sense is recommended.  Expectation management."""
 
-#st.markdown(f'[link](http://localhost:8501/{plan_to_query(plan.to_dict())})')
+"""# Shareable Link """
+st.markdown(f'Copy this link to share with others: [Shareable Link](http://localhost:8501/{plan_to_compressed_str(plan)})')
 
-
+st.markdown("""**Note:** This link simply allows others to see a copy of the forecast, i.e.,
+changes made by others will not be reflected back.""")

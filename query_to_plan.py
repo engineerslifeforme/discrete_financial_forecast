@@ -8,41 +8,44 @@ import yaml
 
 def query_to_plan(params: dict) -> dict:
     saved_plan = {}
-    for key in params:
-        try:
-            table, field_name = key.split('__')
-        except ValueError:
-            continue
-        if table == 'configuration':
-            if table not in saved_plan:
-                saved_plan[table] = {field_name: convert_value(params[key][0])}
+    if 'compressed' in params:
+        saved_plan = compressed_str_to_plan(params['compressed'][0])
+    else:
+        for key in params:
+            try:
+                table, field_name = key.split('__')
+            except ValueError:
+                continue
+            if table == 'configuration':
+                if table not in saved_plan:
+                    saved_plan[table] = {field_name: convert_value(params[key][0])}
+                else:
+                    saved_plan[table][field_name] = convert_value(params[key][0])
             else:
-                saved_plan[table][field_name] = convert_value(params[key][0])
-        else:
-            if table not in saved_plan:
-                saved_plan[table]= []
-            for i, item in enumerate(params[key]):
-                try:
-                    saved_plan[table][i][field_name] = convert_value(item)
-                except IndexError:
-                    saved_plan[table].append({field_name: convert_value(item)})
+                if table not in saved_plan:
+                    saved_plan[table]= []
+                for i, item in enumerate(params[key]):
+                    try:
+                        saved_plan[table][i][field_name] = convert_value(item)
+                    except IndexError:
+                        saved_plan[table].append({field_name: convert_value(item)})
 
-    try:
-        new_list = []
-        for profile in saved_plan['interest_profiles']:
-            item = {}
-            if 'name' in profile:
-                item['name'] = profile['name']
-            if 'profile_type' in profile:
-                item['profile_type'] = profile['profile_type']
-            if 'rate' in profile:
-                item['profile_phases'] = [{'rate': float(profile['rate'])}]
+        try:
+            new_list = []
+            for profile in saved_plan['interest_profiles']:
+                item = {}
+                if 'name' in profile:
+                    item['name'] = profile['name']
                 if 'profile_type' in profile:
-                    item['profile_phases'][0]['phase_type'] = profile['profile_type']
-            new_list.append(item)
-        saved_plan['interest_profiles'] = new_list
-    except KeyError:
-        pass # No interest profiles provided
+                    item['profile_type'] = profile['profile_type']
+                if 'rate' in profile:
+                    item['profile_phases'] = [{'rate': float(profile['rate'])}]
+                    if 'profile_type' in profile:
+                        item['profile_phases'][0]['phase_type'] = profile['profile_type']
+                new_list.append(item)
+            saved_plan['interest_profiles'] = new_list
+        except KeyError:
+            pass # No interest profiles provided
 
     return saved_plan
 
@@ -74,11 +77,11 @@ def plan_to_query(plan_dict: dict) -> str:
                             import pdb;pdb.set_trace()
     return '?'+'&'.join(params)
 
-def plan_to_compressed_str(plan):
+def plan_to_compressed_str(plan) -> str:
     plan_dict = plan.to_dict()
     plan_str = yaml.dump(plan_dict).encode()
     compressed = zlib.compress(plan_str)
-    return str(binascii.hexlify(compressed)).replace('b\'', '').replace('\'', '').upper()
+    return '?compressed='+str(binascii.hexlify(compressed)).replace('b\'', '').replace('\'', '').upper()
 
 def compressed_str_to_plan(compressed_str: str) -> dict:
     return yaml.safe_load(zlib.decompress(bytes.fromhex(compressed_str.replace(' ', ''))))

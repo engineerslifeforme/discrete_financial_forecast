@@ -4,7 +4,12 @@ Real documentation is coming soon.  Only a change log for now.
 
 ## Change Log
 
-### `1.0.2`
+### `1.0.4`
+
+Add shareable link to the bottom as alternative to sharing
+the configuration file.
+
+### `1.0.3`
 
 - Added page title
 - Fixed bug on saved InterestProfiles and milestones

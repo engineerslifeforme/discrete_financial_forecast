@@ -48,7 +48,7 @@ def view_configuration() -> Plan:
             st.info('Using uploaded config file, ignoring URL query parameters')
         elif len(query_plan_dict) > 0:
             dict_plan = query_plan_dict
-            check_version = False
+            check_version = 'version' in dict_plan
             st.info('Using query parameters from URL')
         else:
             dict_plan = {}
