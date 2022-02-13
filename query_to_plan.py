@@ -1,6 +1,10 @@
 """ Convert URL query to plan """
 
 from urllib.parse import quote
+import zlib
+import binascii
+
+import yaml
 
 def query_to_plan(params: dict) -> dict:
     saved_plan = {}
@@ -69,3 +73,13 @@ def plan_to_query(plan_dict: dict) -> str:
                         except:
                             import pdb;pdb.set_trace()
     return '?'+'&'.join(params)
+
+def plan_to_compressed_str(plan):
+    plan_dict = plan.to_dict()
+    plan_str = yaml.dump(plan_dict).encode()
+    compressed = zlib.compress(plan_str)
+    return str(binascii.hexlify(compressed)).replace('b\'', '').replace('\'', '').upper()
+
+def compressed_str_to_plan(compressed_str: str) -> dict:
+    return yaml.safe_load(zlib.decompress(bytes.fromhex(compressed_str.replace(' ', ''))))
+
