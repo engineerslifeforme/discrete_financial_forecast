@@ -18,7 +18,8 @@ st.set_page_config(page_title='Discrete Financial Forecast', layout='wide')
 
 try:
     on_streamlit = st.secrets['STREAMLIT_ENV']
-    URL = 'discrete-finance-forecast/'
+    #URL = 'discrete-finance-forecast/'
+    URL = 'https://share.streamlit.io/engineerslifeforme/discrete_financial_forecast/staging/newapp.py'
 except FileNotFoundError:
     URL = 'localhost:8501/'
 
@@ -138,14 +139,14 @@ so Net Worth.""")
         incomes = tranactions.loc[tranactions['amount'] > ZERO]
         visualize_transactions(incomes, plan, 'Income')
 
-# f"""# Shareable Link
-# Copy this link to share with others: [Shareable Link](http://{URL}{plan_to_compressed_str(plan)})
+f"""# Shareable Link
+Copy this link to share with others: [Shareable Link]({URL}{plan_to_compressed_str(plan)})
 
-# **Note:** 
+**Note:** 
 
-# - **Test this link before sharing.  A VERY long plan can produce a link that the streamlit platform will not except (error 414 URI too long).**  In this case, the configuratoin file must be shared instead.
-# - This link simply allows others to see a copy of the forecast, i.e., changes made by others will not be reflected back.
-# - This link changes any time the plan is changed, i.e., you cannot just bookmark it.
+- **Test this link before sharing.  A VERY long plan can produce a link that the streamlit platform will not except (error 414 URI too long).**  In this case, the configuratoin file must be shared instead.
+- This link simply allows others to see a copy of the forecast, i.e., changes made by others will not be reflected back.
+- This link changes any time the plan is changed, i.e., you cannot just bookmark it.
 
 """# Feedback
 
