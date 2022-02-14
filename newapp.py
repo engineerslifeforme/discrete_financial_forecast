@@ -18,10 +18,12 @@ st.set_page_config(page_title='Discrete Financial Forecast', layout='wide')
 
 try:
     on_streamlit = st.secrets['STREAMLIT_ENV']
-    #URL = 'discrete-finance-forecast/'
-    URL = 'https://share.streamlit.io/engineerslifeforme/discrete_financial_forecast/staging/newapp.py'
+    if 'STAGING' in st.secrets:    
+        URL = 'https://share.streamlit.io/engineerslifeforme/discrete_financial_forecast/staging/newapp.py'
+    else:
+        URL = 'http://discrete-finance-forecast'
 except FileNotFoundError:
-    URL = 'localhost:8501/'
+    URL = 'http://localhost:8501/'
 
 VERSION = '1.0.6'
 
