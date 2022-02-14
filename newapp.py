@@ -1,6 +1,7 @@
 """ Financial Planning App """
 
 import datetime
+import os
 
 import streamlit as st
 import pandas as pd
@@ -13,9 +14,15 @@ from common import dstr, ZERO
 from visualize import visualize_transactions
 from query_to_plan import plan_to_query, plan_to_compressed_str
 
-VERSION = '1.0.5'
-
 st.set_page_config(page_title='Discrete Financial Forecast', layout='wide')
+
+try:
+    on_streamlit = st.secrets['STREAMLIT_ENV']
+    URL = 'discrete-finance-forecast/'
+except FileNotFoundError:
+    URL = 'localhost:8501/'
+
+VERSION = '1.0.6'
 
 f""" # Discrete Financial Forecast """
 
@@ -131,7 +138,16 @@ so Net Worth.""")
         incomes = tranactions.loc[tranactions['amount'] > ZERO]
         visualize_transactions(incomes, plan, 'Income')
 
-""" # Feedback
+f"""# Shareable Link
+Copy this link to share with others: [Shareable Link](http://{URL}{plan_to_compressed_str(plan)})
+
+**Note:** 
+
+- **Test this link before sharing.  A VERY long plan can produce a link that the streamlit platform will not except (error 414 URI too long).**  In this case, the configuratoin file must be shared instead.
+- This link simply allows others to see a copy of the forecast, i.e., changes made by others will not be reflected back.
+- This link changes any time the plan is changed, i.e., you cannot just bookmark it.
+
+# Feedback
 
 Feedback in welcome in the form of  [Github Issues](https://github.com/engineerslifeforme/discrete_financial_forecast/issues)
 on this project.  creativerigor [at] gmail.com is also checked from time to time.
@@ -139,10 +155,4 @@ on this project.  creativerigor [at] gmail.com is also checked from time to time
 While [Buy me a coffee](https://www.buymeacoffee.com/creativerigor) may incentivize requested features, submitting the 
 issue first just to check whether it is feasible and/or makes sense is recommended.  Expectation management."""
 
-#"""# Shareable Link """
-#st.markdown(f'Copy this link to share with others: [Shareable Link](http://localhost:8501/{plan_to_compressed_str(plan)})')
 
-#st.markdown("""**Note:** 
-
-#- This link simply allows others to see a copy of the forecast, i.e., changes made by others will not be reflected back.
-#- This link changes any time the plan is changed, i.e., you cannot just bookmark it.""")

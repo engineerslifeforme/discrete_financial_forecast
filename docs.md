@@ -4,6 +4,10 @@ Real documentation is coming soon.  Only a change log for now.
 
 ## Change Log
 
+### `1.0.6`
+
+Added back shareable links with a different encoding scheme.
+
 ### `1.0.5`
 
 Removed shareable link.  Implemented poorly and URIs were too long.

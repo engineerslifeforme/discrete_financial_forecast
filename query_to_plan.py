@@ -3,8 +3,46 @@
 from urllib.parse import quote
 import zlib
 import binascii
+import base64
 
 import yaml
+
+KEYMAP = {
+    'accounts': 0,
+    'enforce_minimum_balance': 1,
+    'interest_profile': 2,
+    'minimum_balance': 3,
+    'name': 4,
+    'priority': 5,
+    'starting_balance': 6,
+    'assets': 7,
+    'configuration': 8,
+    'duration': 9,
+    'start_month': 10,
+    'start_year': 11,
+    'expenses': 12,
+    'amount': 13,
+    'frequency': 14,
+    'milestone_end': 15,
+    'source_account': 16,
+    'milestone_start': 17,
+    'incomes': 18,
+    'destination_account': 19,
+    'interest_profiles': 20,
+    'profile_phases': 21,
+    'phase_type': 22,
+    'rate': 23,
+    'profile_type': 24,
+    'liabilities': 25,
+    'milestones': 26,
+    'date': 27,
+    'mortgages': 28,
+    'extra_principal': 29,
+    'length': 30,
+    'liability': 31,
+    'transfers': 32,
+    'version': 33,
+}
 
 def query_to_plan(params: dict) -> dict:
     saved_plan = {}
@@ -79,10 +117,32 @@ def plan_to_query(plan_dict: dict) -> str:
 
 def plan_to_compressed_str(plan) -> str:
     plan_dict = plan.to_dict()
-    plan_str = yaml.dump(plan_dict).encode()
+    smaller = replace_keys(plan_dict)
+    plan_str = yaml.dump(smaller).encode()
     compressed = zlib.compress(plan_str)
-    return '?compressed='+str(binascii.hexlify(compressed)).replace('b\'', '').replace('\'', '').upper()
+    return '?compressed='+base64.urlsafe_b64encode(compressed).decode()
+
+def replace_keys(dictionary: dict, reverse:bool =False) -> dict:
+    new_dict = {}
+    if reverse:
+        key_map = {v: k for k, v in KEYMAP.items()}
+    else:
+        key_map = KEYMAP
+    for key in dictionary:
+        thing = dictionary[key]
+        newid = key_map[key]
+        new_dict[newid] = thing
+        if type(thing) == list:
+            new_list = []
+            for item in thing:
+                fixed_item = replace_keys(item, reverse=reverse)
+                new_list.append(fixed_item)
+            new_dict[newid] = new_list
+        elif type(thing) == dict:
+            new_dict[newid] = replace_keys(thing, reverse=reverse)
+    return new_dict
 
 def compressed_str_to_plan(compressed_str: str) -> dict:
-    return yaml.safe_load(zlib.decompress(bytes.fromhex(compressed_str.replace(' ', ''))))
+    raw_dict = zlib.decompress(base64.urlsafe_b64decode(compressed_str.encode()))
+    return replace_keys(yaml.safe_load(raw_dict), reverse=True)
 
