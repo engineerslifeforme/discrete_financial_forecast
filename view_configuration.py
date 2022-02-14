@@ -38,7 +38,9 @@ def view_configuration() -> Plan:
     else:
         upload_content = None
 
-    query_plan_dict = query_to_plan(st.experimental_get_query_params())
+    params = st.experimental_get_query_params()
+    st.write(params)
+    query_plan_dict = query_to_plan(params)
     #st.write(query_plan_dict)
 
     if editor_mode == EDITOR_MODES[0]: #GUI
