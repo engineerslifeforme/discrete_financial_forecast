@@ -148,7 +148,7 @@ Copy this link to share with others: [Shareable Link]({URL}{plan_to_compressed_s
 - This link simply allows others to see a copy of the forecast, i.e., changes made by others will not be reflected back.
 - This link changes any time the plan is changed, i.e., you cannot just bookmark it.
 
-"""# Feedback
+# Feedback
 
 Feedback in welcome in the form of  [Github Issues](https://github.com/engineerslifeforme/discrete_financial_forecast/issues)
 on this project.  creativerigor [at] gmail.com is also checked from time to time.
