@@ -1,3 +1,4 @@
 plotly
 pyyaml
 stqdm
+streamlit-aggrid

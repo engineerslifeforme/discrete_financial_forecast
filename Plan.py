@@ -2,6 +2,8 @@
 
 import streamlit as st
 import pandas as pd
+from st_aggrid import AgGrid
+import numpy as np
 
 from Configuration import Configuration
 from Assets import Asset, Account, Liability
@@ -111,17 +113,17 @@ class Plan:
         frame.columns = ['Quantity']
         return frame
 
-    def asset_builder(self, i: int, Builder):
-        return Builder(i, self)
+    def asset_builder(self, i: int, Builder, **kwargs):
+        return Builder(i, self, **kwargs)
 
-    def transaction_builder(self, i: int, Builder):
-        return Builder(i, self)
+    def transaction_builder(self, i: int, Builder, **kwargs):
+        return Builder(i, self, **kwargs)
 
-    def mortgage_builder(self, i: int, Builder):
-        return Builder(i, self.account_names, self.liability_names)
+    def mortgage_builder(self, i: int, Builder, **kwargs):
+        return Builder(i, self.account_names, self.liability_names, **kwargs)
 
-    def interest_profile_builder(self, i: int, Builder):
-        return Builder(i, self.configuration)
+    def interest_profile_builder(self, i: int, Builder, **kwargs):
+        return Builder(i, self.configuration, **kwargs)
 
     def get_account(self, account_name: str) -> Account:
         return self.accounts[self.account_names.index(account_name)]
@@ -139,18 +141,23 @@ class Plan:
         with st.expander('Plan Configuration'):
             self.configuration.configure()
         asset_types = [
-            ('Milestone', 0, self.milestones, 'milestones', Milestone, self.interest_profile_builder),
-            ('Interest Profile', 1, self.interest_profiles, 'interest_profiles', InterestProfile, self.interest_profile_builder),
-            ('Account', 1, self.accounts, 'accounts', Account, self.asset_builder),
-            ('Asset', 0, self.assets, 'assets', Asset, self.asset_builder),
-            ('Liability', 0, self.liabilities, 'liabilities', Liability, self.asset_builder),
-            ('Income', 0, self.incomes, 'incomes', Income, self.transaction_builder),
-            ('Expense', 0, self.expenses, 'expenses', Expense, self.transaction_builder),
-            ('Transfer', 0, self.transfers, 'transfers', Transfer, self.transaction_builder),
-            ('Mortgage', 0, self.mortgages, 'mortgages', Mortgage, self.mortgage_builder),
+            ('Milestone', 0, self.milestones, 'milestones', Milestone, self.interest_profile_builder, True),
+            ('Interest Profile', 1, self.interest_profiles, 'interest_profiles', InterestProfile, self.interest_profile_builder, False),
+            ('Account', 1, self.accounts, 'accounts', Account, self.asset_builder, True),
+            ('Asset', 0, self.assets, 'assets', Asset, self.asset_builder, True),
+            ('Liability', 0, self.liabilities, 'liabilities', Liability, self.asset_builder, True),
+            ('Income', 0, self.incomes, 'incomes', Income, self.transaction_builder, True),
+            ('Expense', 0, self.expenses, 'expenses', Expense, self.transaction_builder, True),
+            ('Transfer', 0, self.transfers, 'transfers', Transfer, self.transaction_builder, True),
+            ('Mortgage', 0, self.mortgages, 'mortgages', Mortgage, self.mortgage_builder, True),
         ]
-        for asset_name, min_quantity, asset_group, attribute_name, AssetType, builder in asset_types:
+        for asset_name, min_quantity, asset_group, attribute_name, AssetType, builder, tabular_allowed in asset_types:
             with st.expander(f'{asset_name}(s)'):
+                options = ['Form', 'Tabular (Advanced)']
+                if tabular_allowed:
+                    edit_mode = st.radio(f'{asset_name} Edit Mode', options=options)
+                else:
+                    edit_mode = options[0] # Form
                 new_list = []
                 header_info = st.empty()
                 st.markdown(AssetType.description)
@@ -158,11 +165,18 @@ class Plan:
                 st.markdown('---')
                 quantity = int(st.number_input(f'{asset_name} Quantity', min_value=min_quantity, value=max(len(asset_group), min_quantity)))
                 header_info = header_info.info(f'{quantity} Items defined for {asset_name}')
+                editable_list = []
                 for i in range(quantity):
                     try:
                         asset = asset_group[i]
                     except IndexError:
                         asset = builder(i+1, AssetType)
-                    asset.configure(list_placeholder)
-                    new_list.append(asset)
-                setattr(self, attribute_name, new_list)
+                    editable_list.append(asset)
+                if edit_mode == options[0]: # Form
+                    for editable_asset in editable_list:                                        
+                        editable_asset.configure(list_placeholder)
+                elif edit_mode == options[1]: # Tabular
+                    result = AgGrid(pd.DataFrame([asset.to_dict() for asset in editable_list]), editable=True)['data']
+                    result = result.replace({np.nan: None, 'nan': None})
+                    editable_list = [builder(i+1, AssetType, **thing) for i, thing in enumerate(result.to_dict(orient='records'))]
+                setattr(self, attribute_name, editable_list)

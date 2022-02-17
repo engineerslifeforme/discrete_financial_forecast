@@ -26,7 +26,7 @@ class BaseAsset:
         plan,
         name: str = None,
         starting_balance: float = 0.0,
-        minimum_balance: float = 0.0,
+        minimum_balance: float = None,
         enforce_minimum_balance: bool = False,
         priority: int = None,
         interest_profile: str = None):
@@ -38,7 +38,10 @@ class BaseAsset:
         else:
             self.name = name
         self.starting_balance = self.calculate_starting_balance(f2d(starting_balance))
-        self.minimum_balance = f2d(minimum_balance)
+        if minimum_balance is not None:
+            self.minimum_balance = f2d(minimum_balance)
+        else:
+            self.minimum_balance = ZERO
         self.enforce_minimum_balance = enforce_minimum_balance
         self.balance = self.starting_balance
         if priority is None:

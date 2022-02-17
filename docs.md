@@ -4,6 +4,10 @@ Real documentation is coming soon.  Only a change log for now.
 
 ## Change Log
 
+### `1.0.7`
+
+Added tabular editing of data where possible.
+
 ### `1.0.6`
 
 Added back shareable links with a different encoding scheme.
