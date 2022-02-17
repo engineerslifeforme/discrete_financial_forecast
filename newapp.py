@@ -13,6 +13,7 @@ from view_configuration import view_configuration
 from common import dstr, ZERO
 from visualize import visualize_transactions
 from query_to_plan import plan_to_query, plan_to_compressed_str
+from gantt import make_gantt
 
 st.set_page_config(page_title='Discrete Financial Forecast', layout='wide')
 
@@ -131,6 +132,9 @@ so Net Worth.""")
             }
         ), use_container_width=True)
 
+    with st.expander('Time Activity Chart'):
+        st.markdown('## Time Activity Chart')
+        st.pyplot(make_gantt(tranactions, 'date', 'name'))
     with st.expander('Expense Views'):
         st.markdown('## Expense Views')
         expenses = tranactions.loc[tranactions['amount'] < ZERO]
