@@ -93,6 +93,9 @@ You are highly encouraged to double check this app's math and/or experiment with
 
 st.sidebar.markdown('# Data Downloads')
 balance_csv = balance_log.to_csv()
+balance_log.to_csv('a_file.csv')
+with open('a_file.csv', 'r') as fh:
+    st.markdown(fh.read())
 transaction_csv = transactions_df.to_csv()
 st.sidebar.download_button('Balance Log (CSV)', balance_csv, file_name=f'{datetime.datetime.today().date()}_balance_log.csv')
 st.sidebar.download_button('Transaction Log (CSV)', transaction_csv, file_name=f'{datetime.datetime.today().date()}_transaction_log.csv')
